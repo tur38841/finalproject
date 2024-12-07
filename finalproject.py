@@ -1,6 +1,6 @@
 import pygame
-from pygame.locals import * 
-
+from pygame.locals import *
+import random
 pygame.init() #initialize pygame
 screen_width = 800
 screen_height= 800
@@ -37,7 +37,8 @@ class ship(pygame.sprite.Sprite):
         if key_pressed[K_DOWN] and self.rect.bottom < screen_height:
             self.rect.move_ip(0,10)
 
-        #7 is the speed
+
+        #10 is the speed
     
             
 
@@ -60,6 +61,9 @@ class star(pygame.sprite.Sprite):
        
     def update(self):
         self.rect.x -= 4
+        if self.rect.right < 0:
+            self.kill()
+        
 
 
 
@@ -82,18 +86,24 @@ while run:
     all_star.update()
     
     if game_over == False:
+        
         #generate new stars
         time_now = pygame.time.get_ticks()
         if time_now - last_star > star_frequency:
-            top_star  = star(screen_width, int(screen_height / 4), -1) #screen_width starts from beg
-            btm_star = star(screen_width, int(screen_height / 2), 1)
-            all_star.add(top_star, btm_star)
-            last_pipe = time_now
+            star1 = star(screen_width, random.randint(0,800), -1) #screen_width starts from beg int(random.choice(height)
+            star2 = star(screen_width, random.randint(0,800), -1)
+            star3 = star(screen_width, random.randint(0,800), 1)
+            all_star.add(star1, star2, star3)
+            last_star = time_now
+            
     
+    
+        
+        
     for event in pygame.event.get():
         if event.type == pygame.QUIT: 
             run = False
-        if event.type == pygame.MOUSEBUTTONDOWN and flying == False:
+        if event.type == pygame.MOUSEBUTTONDOWN and flying == False and game_over == False:
             flying = True
     pygame.display.update()
     fps.tick(60)
@@ -102,9 +112,4 @@ while run:
 
 
 pygame.quit()
-
-
-#goals for next edit
-# figure out why it is repeating so frequently - chatgpt
-# figure out randomization - youtube
 
