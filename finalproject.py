@@ -25,6 +25,7 @@ class ship(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()#this will create the boundaries of the image for youh
         self.rect.center = (x,y)
 
+        self.hitbox =pygame.Rect(self.rect.x + 10, self.rect.y + 10, 80, 80)
     def move(self):
         key_pressed = pygame.key.get_pressed()
 
@@ -37,14 +38,12 @@ class ship(pygame.sprite.Sprite):
         if key_pressed[K_DOWN] and self.rect.bottom < screen_height:
             self.rect.move_ip(0,10)
 
-
-        #10 is the speed
+        self.hitbox.topleft = self.rect.topleft
     
+        #10 is the speed
             
 
-
-
-class star(pygame.sprite.Sprite):
+class Star(pygame.sprite.Sprite):
     def __init__(self,x,y, position):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('img/star.png')
@@ -58,9 +57,13 @@ class star(pygame.sprite.Sprite):
             self.rect = self.image.get_rect()
             self.rect.topleft = (x,y)
         self.image = pygame.transform.scale(self.image, (200,200))
-       
+        self.rect.inflate_ip(-200,-200)
+
+        self.hitbox = pygame.Rect(self.rect.x + 10, self.rect.y + 10, 80, 80)
+        
     def update(self):
         self.rect.x -= 4
+        self.hitbox.topleft = self.rect.topleft
         if self.rect.right < 0:
             self.kill()
         
@@ -70,8 +73,8 @@ class star(pygame.sprite.Sprite):
 ship = ship(screen_width // 4, screen_height // 2)
 
 all_star = pygame.sprite.Group()
-all_sprites = pygame.sprite.Group()
-all_sprites.add(ship)
+all_ship = pygame.sprite.Group()
+all_ship.add(ship)
 
                  
 
@@ -80,8 +83,8 @@ while run:
     
     screen.blit(bg, (0,0))
     ship.move()
-    all_sprites.draw(screen)
-    all_sprites.update()
+    all_ship.draw(screen)
+    all_ship.update()
     all_star.draw(screen)
     all_star.update()
     
@@ -90,13 +93,27 @@ while run:
         #generate new stars
         time_now = pygame.time.get_ticks()
         if time_now - last_star > star_frequency:
-            star1 = star(screen_width, random.randint(0,800), -1) #screen_width starts from beg int(random.choice(height)
-            star2 = star(screen_width, random.randint(0,800), -1)
-            star3 = star(screen_width, random.randint(0,800), 1)
+            star1 = Star(screen_width, random.randint(0,800), -1) #screen_width starts from beg int(random.choice(height)
+            star2 = Star(screen_width, random.randint(0,800), -1)
+            star3 = Star(screen_width, random.randint(0,800), 1)
             all_star.add(star1, star2, star3)
             last_star = time_now
-            
+
+
+                
+        all_star.update()
+
+
+
+    for star in all_star:
+        if ship.hitbox.colliderect(star.hitbox):  # Check if the ship's hitbox intersects the star's hitbox
+            game_over = True
     
+    if game_over:
+        font = pygame.font.Font(None, 74)
+        text = font.render("Game Over!", True, (255, 0, 0))
+        screen.blit(text, (screen_width//2 - text.get_width()//2, screen_height//2))
+
     
         
         
@@ -112,4 +129,3 @@ while run:
 
 
 pygame.quit()
-
