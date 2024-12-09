@@ -10,7 +10,7 @@ fps = pygame.time.Clock()
 screen_width = 800
 screen_height= 800
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Stars Incoming!")
+pygame.display.set_caption("Stars, Incoming!")
 
 #the galaxy background
 bg = pygame.image.load('img/galaxy.jpg')
@@ -139,3 +139,5 @@ while run:
 
 
 pygame.quit()
+
+
